@@ -4,12 +4,15 @@ BEGIN {
     prev_line = ""
     prev_key = ""
     key = ""
-    array_index = 0
+    array_index[0] = 0
+    array_nest = 0
 }
 
 /\[/ {
-    path = path ".ARRAY" array_index
     type_path = type_path "A"
+    array_nest += 1
+    array_index[array_nest] = 0
+    path = path ".ARRAY" array_index[array_nest]
     prev_line = $0
     next
 }
@@ -24,12 +27,14 @@ BEGIN {
 /\]/ {
     sub(/.ARRAY[0-9]+$/, "", path)
     sub(/A$/, "", type_path)
+    array_nest -= 1
     prev_line = $0
     next
 }
 
 /\}/ {
-    sub("." key, "", path)
+    n = split(path, path_array, ".")
+    sub("." path_array[n], "", path)
     sub(/O$/, "", type_path)
     prev_line = $0
     next
@@ -41,9 +46,9 @@ BEGIN {
         exit
     }
 
-    if (match(path, /ARRAY[0-9]$/) != 0) {
-        array_index += 1
-        sub(/ARRAY[0-9]$/, "ARRAY" array_index, path)
+    if (match(path, /ARRAY[0-9]+$/) != 0) {
+        array_index[array_nest] += 1
+        sub(/ARRAY[0-9]+$/, "ARRAY" array_index[array_nest], path)
     } else {
         prev_line = $0
         next
