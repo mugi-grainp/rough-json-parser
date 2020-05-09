@@ -12,12 +12,8 @@
 # .ARRAY1."test1" "newtest1"
 # .ARRAY1."test2" 888
 
-
-sed 's/\([[{,:]\)/\1\n/g'           | # 簡易的なトークン分割
-sed 's/\([]},:]\)/\n\1/g'           | # 簡易的なトークン分割
-sed 's/^[[:space:]]\+//'            |
-sed 's/[[:space:]]\+$//'            |
-sed '/^$/d'                         |
-awk -f $(dirname $0)/jsonp-main.awk |
+awk -f $(dirname $0)/split-to-char.awk |
+awk -f $(dirname $0)/tokenizer.awk     |
+awk -f $(dirname $0)/jsonp-main.awk    |
 sed 's/^ROOT//'
 
