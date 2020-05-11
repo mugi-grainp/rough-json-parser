@@ -7,13 +7,12 @@
 
 # 入力例: [{"test1":"test", "test2":999}, {"test1": "newtest1", "test2": 888}]
 # 出力例
-# .ARRAY0."test1" "test"
-# .ARRAY0."test2" 999
-# .ARRAY1."test1" "newtest1"
-# .ARRAY1."test2" 888
+# ROOT.ARRAY0."test1" "test"
+# ROOT.ARRAY0."test2" 999
+# ROOT.ARRAY1."test1" "newtest1"
+# ROOT.ARRAY1."test2" 888
 
 awk -f $(dirname $0)/split-to-char.awk |
 awk -f $(dirname $0)/tokenizer.awk     |
-awk -f $(dirname $0)/jsonp-main.awk    |
-sed 's/^ROOT//'
+awk -f $(dirname $0)/jsonp-main.awk
 
