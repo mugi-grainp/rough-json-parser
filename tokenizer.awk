@@ -44,7 +44,7 @@ BEGIN {
     next
 }
 
-/[\[\{:]/ {
+/[\[\{]/ {
     print
     next
 }
@@ -56,6 +56,13 @@ BEGIN {
     }
     print
     next
+}
+
+/:/ {
+    if (in_the_string == 0) {
+        print
+        next
+    }
 }
 
 /,/ {
