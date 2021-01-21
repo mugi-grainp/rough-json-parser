@@ -8,7 +8,7 @@ BEGIN {
     array_nest = 0
 }
 
-/\[/ {
+/^\[/ {
     type_path = type_path "A"
     array_nest += 1
     array_index[array_nest] = 0
@@ -17,14 +17,14 @@ BEGIN {
     next
 }
 
-/\{/ {
+/^\{/ {
     path = path".OBJECT"
     type_path = type_path "O"
     prev_line = $0
     next
 }
 
-/\]/ {
+/^\]/ {
     sub(/.ARRAY[0-9]+$/, "", path)
     sub(/A$/, "", type_path)
     array_nest -= 1
@@ -32,7 +32,7 @@ BEGIN {
     next
 }
 
-/\}/ {
+/^\}/ {
     n = split(path, path_array, ".")
     sub("." path_array[n], "", path)
     sub(/O$/, "", type_path)
@@ -40,7 +40,7 @@ BEGIN {
     next
 }
 
-/,/ {
+/^,/ {
     if (type_path == "") {
         print "Syntax Error: Invalid Comma Detected." > "/dev/stderr"
         exit
@@ -57,7 +57,7 @@ BEGIN {
     if (match(type_path, /O/) == 0) { prev_line = $0; next }
 }
 
-/:/  { 
+/^:/  { 
     n = split(path, path_array, ".")
     prev_key = path_array[n]
     key = prev_line
